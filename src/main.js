@@ -21,19 +21,17 @@ function convertTimeZone(timezone) {
   const browserTimeZone = moment.tz.guess();
   const browser_utc = getTimeZone(browserTimeZone).split(" ");
   const browser_utc_ms = getUtcTimeZone(browser_utc); // -10:30 num   -34200000ms
+  console.log(" browser_utc_ms " + browser_utc_ms + " hour:: " + browser_utc_ms / 3600000);
 
   /* contributor browser utc tome zone   */
   const contributor_schedule = timezone.split(',,');
   const n_contributor_utc = contributor_schedule[0].split(' ');
   const contributor_utc_ms = getUtcTimeZone(n_contributor_utc);
-  console.log(" n_contributor_utc " + contributor_utc_ms);
+  console.log(" n_contributor_utc " + contributor_utc_ms + " contributor hour :: " + contributor_utc_ms / 3600000);
 
   const utc_difference = diff_utc_ms(browser_utc_ms, contributor_utc_ms) //21600000
-  // const current_browser_utc = parseInt(browser_utc[(browser_utc.length) - 1]);
-  // const contributor_utc = parseInt(n_contributor_utc[(n_contributor_utc.length) - 1]);
-  // console.log(" time_zone " + contributor_utc);
+  console.log(" utc_difference " + utc_difference + " utc_difference hour :: " + utc_difference / 3600000);
 
-  // const utc_difference = current_browser_utc - contributor_utc;
 
 
   for (let i = 0; i < contributor_schedule.length; i++) {
@@ -46,6 +44,7 @@ function convertTimeZone(timezone) {
       console.log("time: " + times);
 
       const new_hour = changeTimeZone(contributer_hour_ms, utc_difference);
+      console.log("new_hour: " + new_hour + " new----hour " + new_hour / 3600000);
     }
   }
 }
@@ -54,14 +53,24 @@ function convertTimeZone(timezone) {
 function getContributorTime(times) {
   for (let x = 0; x < times.length; x++) {
 
-    let contributor_hour = times[x].split(':');
-    console.log(" contributor_hour   " + contributor_hour);
-    for (let i = 0; i < contributor_hour.length; i++) {
-      const contributer_hour_ms = parseInt(contributor_hour[0]);
+    let c_hour = times[x].split(':');
+
+    let hour_in_ms = 0;
+    let minute_in_ms = 0;
+    let total_time = 0;
+    for (let i = 0; i < c_hour.length; i++) {
+      if (i == 0) {
+        hour_in_ms = parseInt(c_hour[0]) * 3600000;
+      }
+      if (i == 1) {
+        minute_in_ms = parseInt(c_hour[1]) * 60000;
+      }
+
+      //const contributer_hour_ms = parseInt(contributor_hour[0]);
     }
-
-
-
+    total_time = hour_in_ms + minute_in_ms;
+    //console.log(" -------- total_time ----------" + total_time);
+    return total_time;
   }
 }
 
@@ -90,6 +99,7 @@ function getUtcTimeZone(browser_utc_str) {
     browser_str += browser_utc_str[i];
   }
   let browser_utc = browser_str.split(':');
+
   let new_browser_utc_hm = 0;
   let new_browser_utc_mm = 0;
   for (let x = 0; x < browser_utc.length; x++) {
@@ -107,14 +117,15 @@ function getUtcTimeZone(browser_utc_str) {
 /*-------------------------------------- */
 /*----   change hour -----*/
 function changeTimeZone(hour, utc_ms) {
-  const subcriber_ms = (hour * 3600000) + utc_ms;
-  console.log(" subcriber_ms " + subcriber_ms);
+
+  const subcriber_ms = hour + utc_ms;
+  console.log(" subcriber_ms   " + subcriber_ms + " subcriber_hour  " + subcriber_ms / 3600000);
   const val = 23 * 3600000;
   if (subcriber_ms > val) {
     const current_subcriber_ms = (subcriber_ms % val);
 
     const str_subcriber_ms = current_subcriber_ms.toString();
-    console.log(" 000   " + str_subcriber_ms + " hour " + (str_subcriber_ms / 3600000));
+    console.log(" str_subcriber_ms   " + str_subcriber_ms);
     return str_subcriber_ms;
 
   }
