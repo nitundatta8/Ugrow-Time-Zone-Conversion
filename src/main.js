@@ -19,6 +19,7 @@ function getTimeZone(timezone) {
 function convertTimeZone(timezone) {
   /*  browser utc tome zone */
   const browserTimeZone = moment.tz.guess();
+
   const browser_utc = getTimeZone(browserTimeZone).split(" ");
   const browser_utc_ms = getUtcTimeZone(browser_utc); // -10:30 num   -34200000ms
   console.log(" browser_utc_ms " + browser_utc_ms + " hour:: " + browser_utc_ms / 3600000);
@@ -142,3 +143,34 @@ element.innerHTML = `<div>
 <h5></h5>
 <h5></h5>
 </div>`;
+
+
+
+function dateOfDay(day) {
+  const dayMapping = {
+    'monday': 1,
+    'tuesday': 2,
+    'wednesday': 3,
+    'thursday': 4
+  };
+  console.log("weekday:" + dayMapping[day]);
+  console.log("timezone::::::: " + moment.tz.guess());
+  const dayINeed = 4; // for Thursday
+  const today = moment().isoWeekday();
+
+  // if we haven't yet passed the day of the week that I need:
+  if (today <= dayINeed) {
+    // then just give me this week's instance of that day
+    console.log("date:: " + moment().isoWeekday(dayINeed).format("MM/DD/YYYY"));
+  } else {
+    // otherwise, give me *next week's* instance of that same day
+    console.log("date:: " + moment().add(1, 'weeks').isoWeekday(dayINeed).format("MM/DD/YYYY"));
+  }
+
+
+  const channelTime = moment("2020-11-16T06:13:00+06:00", "YYYY-MM-DDThh:mm:ssZ");
+  const browserTimeZone = moment.tz.guess();
+  console.log("date formatted: " + channelTime.tz(browserTimeZone).format());
+}
+
+dateOfDay('monday');
