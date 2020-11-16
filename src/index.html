@@ -4,13 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Time Zone Conversion</title>
+  <style>
+    .float-container {
+      border: 3px solid #fff;
+      padding: 0px;
+      max-width: 900px;
+    }
+
+    .float-child {
+      width: 12%;
+      float: left;
+      padding: 0px;
+      /* border: 2px solid red; */
+    }
+  </style>
 </head>
 
 <body>
-  <div id="output">
-    <input type="hidden" id="timezone" name="timezone"
-      value="UTC - 4,,monday 18:00:00,08:00:00,,tuesday 17:20:00,,wednesday 09:00:00,,thursday 19:00:00,,friday 15:10:00,,saturday 17:10:00,,">
-  </div>
+
+  <input type="hidden" id="timezone" name="timezone"
+    value="UTC - 8,,monday 01:00:00,08:00:00,,tuesday 17:20:00,,wednesday 09:00:00,,thursday 19:00:00,,friday 15:10:00,,saturday 17:10:00,,">
+  <div id="schedule" class="float-container"></div>
+
 
 </body>
 
