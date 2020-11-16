@@ -28,20 +28,26 @@ function dateOfDay(timezone) {
   console.log("   contributor_schedule   " + contributor_schedule);
   let dayName = '';
   let dayINeed = 0;
-  let browser_time = '';
-  for (let i = 0; i < contributor_schedule.length; i++) {
+  let browser_timezone = '';
+  const utc = contributor_schedule[0];
+  const new_utc = utc.substring(3, utc.length).replaceAll(" ", "");
+  const currentUtc = (new_utc.length !== 3) ? new_utc[0] + "0" + new_utc[1] : new_utc;
+  console.log('utc   ' + new_utc + " currentUtc:" + currentUtc);
+  for (let i = 1; i < contributor_schedule.length; i++) {
 
     if (contributor_schedule[i].trim() !== '') {
       let clock = contributor_schedule[i].split(' ');
-      if (clock[0].trim() !== 'UTC') {
-        dayName = clock[0];
-        console.log("Day: " + dayName);
-        dayINeed = dayMapping[dayName];
-        console.log("weekday:" + dayMapping[dayName]);
-        const dateOfday = getDateOfDay(dayINeed);
-        console.log("  date Of day   " + dateOfday);
-        browser_time = getBroserTimeZone(dateOfday);
-      }
+
+      //if (clock[0].trim() !== 'UTC') {
+
+      dayName = clock[0];
+      console.log("Day: " + dayName);
+      dayINeed = dayMapping[dayName];
+      console.log("weekday:" + dayMapping[dayName]);
+      const dateOfday = getDateOfDay(dayINeed);
+      console.log("  date Of day   " + dateOfday);
+      browser_timezone = convertToBroserTime(dateOfday, clock[1]);
+      //}
     }
   }
 
@@ -49,18 +55,29 @@ function dateOfDay(timezone) {
 
 /* browser */
 
-function getBroserTimeZone(dateOfday) {
+function convertToBroserTime(dateOfday, clock) {
+  let map = new Map();
+  // for(let i=0;i<clock.length;i++){
 
-  const channelTime = moment(dateOfday + "T06:13:00+06:00", "YYYY-MM-DDThh:mm:ssZ");
+  // }
+  const channelTime = moment(dateOfday + "T12:10:00+6:00", "YYYY-MM-DDThh:mm:ssZ");
   console.log("timezone::::::: " + moment.tz.guess());
   const browserTimeZone = moment.tz.guess();
   const browser_time_zone = channelTime.tz(browserTimeZone).format();
   console.log("date formatted: " + channelTime.tz(browserTimeZone).format('MM-DD-YYYYThh:mm:ssZ'));
-  let momenntObj = moment(browser_time_zone).format('dddd');
-  console.log(' browser day ' + momenntObj);
-  // var month = check.format('M');
-  // var day = check.format('D');
-  // var year = check.format('YYYY');
+
+  //var myDateVariable= moment("01/01/2019").format("dddd Do MMMM YYYY")
+  // get the day. =>Friday 
+  let browser_day_name = moment(browser_time_zone).format('dddd');
+  console.log(' browser day ' + browser_day_name);
+  let browser_day_time = moment(browser_time_zone).format('hh:mm:ss');
+  console.log(' browser_day_time ' + browser_day_time);
+  if (map.has(browser_day_name)) {
+    map.set(browser_day_name, browser_day_time)
+  } else {
+    map.set(browser_day_name, browser_day_time)
+  }
+
   return browser_time_zone;
 }
 
