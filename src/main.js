@@ -1,29 +1,23 @@
+import './style.css';
 import moment from 'moment-timezone';
 
-const time_zone = document.getElementById('timezone').value;
-const currentSubcsriberTimeZone = dateOfDay(time_zone);
-console.log("currentSubcsriberTimeZone");
-console.log(currentSubcsriberTimeZone);
+const schedules = document.getElementById('timezone').value;
+console.log(' schedules ' + schedules);
+const currentSubcsriberTimeZone = convertSchedule(schedules);
 let element = document.getElementById('schedule');
 let scheduleUI = '';
 
 currentSubcsriberTimeZone.forEach(function (value, key) {
+  value = value.replaceAll(",", "<br>")
   scheduleUI += `<div class="float-child">
-  <h5>${key}:</h5>${value}
-</div>`
-  //console.log(`${key}: ${value}<br>`)
-
+  
+                  <h5>${key}:</h5>${value}
+                </div>`
 });
 element.innerHTML = scheduleUI;
 
 
-
-// const element = document.getElementById('output');
-
-
-
-
-function dateOfDay(timezone) {
+function convertSchedule(schedules) {
   const dayMapping = {
     'monday': 1,
     'tuesday': 2,
@@ -34,36 +28,38 @@ function dateOfDay(timezone) {
     'sunday': 7
   };
 
-  const contributor_schedule = timezone.split(',,');
-  console.log("   contributor_schedule   " + contributor_schedule);
+  const contributor_schedule = schedules.split(',,');
+
   let dayName = '';
   let dayINeed = 0;
   let browser_time_zone = '';
-
   let map = new Map();
+
+  //contributor utc time zone.Exp: UTC - 4
   const utc = contributor_schedule[0];
   const new_utc = utc.substring(3, utc.length).replaceAll(" ", "");
   const currentUtc = (new_utc.length !== 3) ? new_utc[0] + "0" + new_utc[1] : new_utc;
-  console.log('utc   ' + new_utc + " currentUtc:" + currentUtc);
+
+  //contributor day and times.Exp: monday 18:00:00 pm
   for (let i = 1; i < contributor_schedule.length; i++) {
 
     if (contributor_schedule[i].trim() !== '') {
-      let clock = contributor_schedule[i].split(' ');
-      dayName = clock[0];
-      console.log("Day: " + dayName);
-      dayINeed = dayMapping[dayName];
-      console.log("weekday:" + dayMapping[dayName]);
-      const dateOfday = getDateOfDay(dayINeed);
-      console.log("  date Of day   " + dateOfday);
-      const clock1 = clock[1].split(',');
-      console.log('clock:' + clock1);
+      let days_times = contributor_schedule[i].split(' ');
+      dayName = days_times[0];   // Exp: monday
+      console.log('dayName  ' + dayName)
+      dayINeed = dayMapping[dayName];   //Exp: 1 for monday
 
-      for (let i = 0; i < clock1.length; i++) {
-        browser_time_zone = convertToBroserTime(dateOfday, clock1[i], currentUtc);
+      const dateOfDay = getDateOfDay(dayINeed); // Exp: 2020-11-16
+      console.log("  date Of day   " + dateOfDay);
+      const times = days_times[1].split(',');  // Exp:  01:00:00
+      console.log('clock:' + times);
+
+      for (let i = 0; i < times.length; i++) {
+        browser_time_zone = convertToBroserTime(dateOfDay, times[i], currentUtc); //Exp: 2020-11-15T23:00:00-10:00
         console.log('browser_timezone ' + browser_time_zone);
-        let browser_day_name = moment(browser_time_zone).format('dddd');
+        let browser_day_name = moment(browser_time_zone).format('dddd'); // Exp:Monday
         console.log(' browser day ' + browser_day_name);
-        let browser_day_time = moment(browser_time_zone).format('hh:mm:ss A');
+        let browser_day_time = moment(browser_time_zone).format('h:mma z');
         console.log(' browser_day_time ' + browser_day_time);
 
         if (map.has(browser_day_name)) {
@@ -73,14 +69,14 @@ function dateOfDay(timezone) {
           map.set(browser_day_name, browser_day_time);
         }
 
-        //console.log(map);
       }
     }
   }
+  console.log(map)
   return map;
 }
 
-/* browser */
+/* convert contributor time to Browser time. Exp: 2020-11-15T23:00:00-10:00 */
 
 function convertToBroserTime(dateOfday, clock, currentUtc) {
   let map = new Map();
