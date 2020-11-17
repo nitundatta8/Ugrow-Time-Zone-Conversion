@@ -1,5 +1,6 @@
-import './style.css';
+
 import moment from 'moment-timezone';
+import './style.css';
 
 const schedules = document.getElementById('timezone').value;
 console.log(' schedules ' + schedules);
@@ -10,7 +11,6 @@ let scheduleUI = '';
 currentSubcsriberTimeZone.forEach(function (value, key) {
   value = value.replaceAll(",", "<br>")
   scheduleUI += `<div class="float-child">
-  
                   <h5>${key}:</h5>${value}
                 </div>`
 });
